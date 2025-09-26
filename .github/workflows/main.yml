@@ -1,1 +1,49 @@
+name: 'CI Workflow'
+'on':
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
+jobs:
+  say-hello:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Print Hello'
+        run: 'echo "Hello, World!"'
+      - name: 'Show Current Directory'
+        run: 'pwd'
+      - name: 'List Files'
+        run: 'ls -la'
+  build:
+    runs-on: 'ubuntu-latest'
+    needs: 'say-hello'
+    steps:
+      - name: 'Checkout Repository'
+        uses: 'actions/checkout@v3'
+      - name: 'Setup Node.js'
+        uses: 'actions/setup-node@v3'
+        with:
+          node-version: '18'
+      - name: 'Install Dependencies'
+        run: 'npm install'
+      - name: 'Run Build'
+        run: 'npm run build'
+  test:
+    runs-on: 'ubuntu-latest'
+    needs: 'build'
+    steps:
+      - name: 'Checkout Repository'
+        uses: 'actions/checkout@v3'
+      - name: 'Setup Node.js'
+        uses: 'actions/setup-node@v3'
+        with:
+          node-version: '18'
+      - name: 'Install Dependencies'
+        run: 'npm ci'
+      - name: 'Run Tests'
+        run: 'npm test'
+      - name: 'Print Success Message'
+        run: 'echo "✅ All tests passed successfully!"'
 
